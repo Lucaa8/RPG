@@ -20,6 +20,7 @@ namespace RPG
             void setX(double);
             void setY(double);
             void setZ(double);
+            void add(double, double, double);
             friend ostream& operator<<(ostream&, const Location&);
             static double getDistance(const Location&, const Location&);
             Location* clone();

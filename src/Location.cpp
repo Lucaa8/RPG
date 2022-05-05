@@ -41,6 +41,13 @@ namespace RPG
         this->z = z;
     }
 
+    void Location::add(double x, double y, double z)
+    {
+        setX(getX()+x);
+        setY(getY()+y);
+        setZ(getZ()+z);
+    }
+
     ostream& operator<<(ostream &s, const Location &h)
     {
         cout << setprecision(2) << fixed << "Location{x=" << h.getX() << ", y=" << h.getY() << ", z=" << h.getZ() << "}";
