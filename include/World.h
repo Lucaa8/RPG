@@ -2,8 +2,6 @@
 #define WORLD_H
 
 #include <iostream>
-#include <vector>
-#include <algorithm>
 using namespace std;
 
 #include "Location.h"
