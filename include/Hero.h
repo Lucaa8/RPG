@@ -1,6 +1,7 @@
 #ifndef HERO_H
 #define HERO_H
 
+#include <SFML/Graphics.hpp>
 #include <iostream>
 using namespace std;
 
@@ -10,6 +11,7 @@ using namespace std;
 #include "Shield.h"
 #include "Location.h"
 #include "Backpack.h"
+#include "Animation.h"
 
 namespace RPG
 {
@@ -20,7 +22,7 @@ namespace RPG
             static double const interactDistance; //max distance between 2 hero to allow interactions
             Hero();
             Hero(const Hero&);
-            Hero(int, int, int, double, string, IObject*, Location*);
+            Hero(int, int, int, double, string, IObject*, Location*, Animation*);
             virtual ~Hero();
             virtual bool interact(const Hero&) const = 0;
             bool damage(const Hero&);
@@ -38,6 +40,13 @@ namespace RPG
             IObject* getObject() const;
             Location* getLocation() const;
 
+            //Graphical part
+            sf::Sprite& getSprite();
+            Animation* getAnimation() const;
+            void draw(sf::RenderTarget&, sf::Font&) const;
+            void setDirection(const sf::Vector2f& dir);
+            void update(float deltaTime);
+
         protected:
             void setObject(IObject* newObject);
             virtual void show() const = 0;
@@ -49,7 +58,10 @@ namespace RPG
             double hp;
             string name;
             IObject* object;
-            Location* loc;
+            Location* loc; //still using this class to store the sprite's pos instead of vect2f but not using z coord. Because teleport methods are useful
+            sf::Vector2f velocity = {0.0f, 0.0f};
+            sf::Sprite sprite;
+            Animation* frames;
 
             //SETTERS
             void setHealth(double);

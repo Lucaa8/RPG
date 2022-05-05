@@ -11,16 +11,19 @@ namespace RPG
         hp(0),
         name("no_name"),
         object(nullptr),
-        loc(new Location()) {}
+        loc(new Location()),
+        frames(nullptr) {}
 
-    Hero::Hero(int strength, int agility, int intelligence, double hp, string name, IObject* object, Location* loc) :
+    Hero::Hero(int strength, int agility, int intelligence, double hp, string name, IObject* object, Location* loc, Animation* frames) :
         strength(strength),
         agility(agility),
         intelligence(intelligence),
         hp(hp),
         name(name),
         object(object),
-        loc(loc) {}
+        loc(loc),
+        sprite(sf::Sprite()),
+        frames(frames) {}
 
     Hero::Hero(const Hero& hero) :
         strength(hero.strength),
@@ -29,12 +32,14 @@ namespace RPG
         hp(hero.hp),
         name(hero.name),
         object(hero.getObject()->clone()),
-        loc(hero.getLocation()->clone()) {}
+        loc(hero.getLocation()->clone()),
+        frames(hero.frames->clone()) {}
 
     Hero::~Hero()
     {
         delete object;
         delete loc;
+        delete frames;
     }
 
     ostream& operator<<(ostream &s, const Hero &h)
@@ -159,6 +164,58 @@ namespace RPG
     Location* Hero::getLocation() const
     {
         return loc;
+    }
+
+    //Graphical part
+    sf::Sprite& Hero::getSprite()
+    {
+        return sprite;
+    }
+
+    Animation* Hero::getAnimation() const
+    {
+        return frames;
+    }
+
+    void Hero::draw(sf::RenderTarget& target, sf::Font& defFont) const
+    {
+        target.draw(sprite);
+        Text nametag(getName(), defFont, 20);
+        nametag.setPosition(sprite.getPosition().x+24, sprite.getPosition().y-10);
+        target.draw(nametag);
+    }
+
+    void Hero::setDirection(const sf::Vector2f& dir)
+    {
+        velocity = dir * (agility*1.0f);
+    }
+
+    void Hero::update(float deltaTime)
+    {
+        loc->add(velocity.x*deltaTime, velocity.y*deltaTime, 0);
+        sprite.setPosition({(float)loc->getX(), (float)loc->getY()});
+        if(frames!=nullptr)
+        {
+            Frame* f = frames->getCurrentFrame();
+            if(velocity.x > 0)
+            {
+                f->setFrameY(11);
+            }
+            else if(velocity.x < 0)
+            {
+                f->setFrameY(9);
+            }
+            if(velocity.y > 0)
+            {
+                f->setFrameY(10);
+            }
+            else if(velocity.y < 0)
+            {
+                f->setFrameY(8);
+            }
+            frames->getCurrentFrame()->run = velocity.x != 0 || velocity.y != 0;
+            frames->tick(deltaTime, sprite);
+        }
     }
 }
 
