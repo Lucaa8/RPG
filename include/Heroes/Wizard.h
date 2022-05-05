@@ -3,6 +3,7 @@
 
 #include "Hero.h"
 #include "Potion.h"
+#include "Animation.h"
 
 #include <iostream>
 using namespace std;
@@ -13,7 +14,7 @@ namespace RPG
     {
         public:
             Wizard();
-            Wizard(int, int, int, double, string, Potion*, Location*, int);
+            Wizard(int, int, int, double, string, Potion*, Location*, Animation*, int);
             virtual ~Wizard();
             void castSpeel();
             bool interact(const Hero&) const override;

@@ -2,8 +2,8 @@
 
 namespace RPG
 {
-    Necromancer::Necromancer(int strength, int agility, int intelligence, double hp, string name, Potion* potion, Location* loc, int mana) :
-        Wizard(strength, agility, intelligence, hp, name, potion, loc, mana) {}
+    Necromancer::Necromancer(int strength, int agility, int intelligence, double hp, string name, Potion* potion, Location* loc, Animation* frames, int mana) :
+        Wizard(strength, agility, intelligence, hp, name, potion, loc, frames, mana) {}
 
     Necromancer::Necromancer() : Wizard() {}
 

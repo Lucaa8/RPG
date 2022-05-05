@@ -3,6 +3,7 @@
 
 #include "Hero.h"
 #include "Weapon.h" //for the default weapon
+#include "Animation.h"
 
 #include <iostream>
 using namespace std;
@@ -13,7 +14,7 @@ namespace RPG
     {
         public:
             Warrior();
-            Warrior(int, int, int, double, string, IObject*, Location*);
+            Warrior(int, int, int, double, string, IObject*, Location*, Animation*);
             virtual ~Warrior();
             bool interact(const Hero&) const override;
             void show() const override;

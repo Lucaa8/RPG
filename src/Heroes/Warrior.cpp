@@ -7,8 +7,8 @@ namespace RPG
         setObject(new Weapon());
     }
 
-    Warrior::Warrior(int strength, int agility, int intelligence, double hp, string name, IObject* object, Location* loc) :
-        Hero(strength, agility, intelligence, hp, name, object, loc) {}
+    Warrior::Warrior(int strength, int agility, int intelligence, double hp, string name, IObject* object, Location* loc, Animation* frames) :
+        Hero(strength, agility, intelligence, hp, name, object, loc, frames) {}
 
     Warrior::~Warrior()
     {

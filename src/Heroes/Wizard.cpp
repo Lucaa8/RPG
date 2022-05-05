@@ -2,8 +2,8 @@
 
 namespace RPG
 {
-    Wizard::Wizard(int strength, int agility, int intelligence, double hp, string name, Potion* potion, Location* loc, int mana) :
-        Hero(strength, agility, intelligence, hp, name, potion, loc), mana(mana) {}
+    Wizard::Wizard(int strength, int agility, int intelligence, double hp, string name, Potion* potion, Location* loc, Animation* frames, int mana) :
+        Hero(strength, agility, intelligence, hp, name, potion, loc, frames), mana(mana) {}
 
     Wizard::Wizard() : Hero(), mana(0)
     {

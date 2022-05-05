@@ -9,7 +9,7 @@ namespace RPG
     {
         public:
             Necromancer();
-            Necromancer(int, int, int, double, string, Potion*, Location*, int);
+            Necromancer(int, int, int, double, string, Potion*, Location*, Animation*, int);
             ~Necromancer();
             void riseUndeads();
 
