@@ -41,7 +41,7 @@ namespace RPG
 
     string Weapon::toString() const
     {
-        std::stringstream ss;
+        stringstream ss;
         ss << "Weapon implements IObject{Name=" << getWeaponName() << ", Damage=" << getDamage() << ", Reach=" << getRange() << "}";
         return ss.str();
     }

@@ -24,11 +24,11 @@ namespace RPG
             IObject* clone() override;
 
         protected:
-
-        private:
             string weaponName;
             double weaponDamage;
             double weaponRange;
+
+        private:
 
     };
 }
