@@ -188,32 +188,45 @@ namespace RPG
     void Hero::setDirection(const sf::Vector2f& dir)
     {
         velocity = dir * (agility*1.0f);
+        if(frames!=nullptr)
+        {
+            Frame* f = frames->getCurrentFrame();
+            Dir d = Dir::NONE;
+            if(velocity.x > 0)
+            {
+                d = Dir::RIGHT;
+            }
+            else if(velocity.x < 0)
+            {
+                d = Dir::LEFT;
+            }
+            if(velocity.y > 0)
+            {
+                d = Dir::FRONT;
+            }
+            else if(velocity.y < 0)
+            {
+                d = Dir::BACK;
+            }
+            f->setDirection(d);
+        }
     }
 
     void Hero::update(float deltaTime)
     {
-        loc->add(velocity.x*deltaTime, velocity.y*deltaTime, 0);
-        sprite.setPosition({(float)loc->getX(), (float)loc->getY()});
+        if(object->isInUse())
+        {
+
+        }
+        else
+        {
+            loc->add(velocity.x*deltaTime, velocity.y*deltaTime, 0);
+            sprite.setPosition({(float)loc->getX(), (float)loc->getY()});
+        }
         if(frames!=nullptr)
         {
-            Frame* f = frames->getCurrentFrame();
-            if(velocity.x > 0)
-            {
-                f->setFrameY(11);
-            }
-            else if(velocity.x < 0)
-            {
-                f->setFrameY(9);
-            }
-            if(velocity.y > 0)
-            {
-                f->setFrameY(10);
-            }
-            else if(velocity.y < 0)
-            {
-                f->setFrameY(8);
-            }
-            frames->getCurrentFrame()->run = velocity.x != 0 || velocity.y != 0;
+            //dont animate the sprite if current is walking but the player isnt walking
+            frames->getCurrentFrame()->run = velocity.x != 0 || velocity.y != 0 || frames->getCurrentFrame()->getCurrent()!=AnimType::WALKING;
             frames->tick(deltaTime, sprite);
         }
     }

@@ -6,7 +6,7 @@
 using namespace std;
 
 #include "IObject.h"
-#include "Weapon.h"
+#include "Bow.h"
 #include "Potion.h"
 #include "Shield.h"
 #include "Location.h"
@@ -45,6 +45,7 @@ namespace RPG
             Animation* getAnimation() const;
             void draw(sf::RenderTarget&, sf::Font&) const;
             void setDirection(const sf::Vector2f& dir);
+            //void useWeapon()
             void update(float deltaTime);
 
         protected:
