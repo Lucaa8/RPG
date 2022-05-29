@@ -12,6 +12,10 @@ namespace RPG
             virtual ~IObject(){}
             virtual string getName() const = 0;
             virtual int getFeature() const = 0;
+            virtual bool isInUse() const
+            {
+                return false; //Unknown use at this point
+            }
             virtual string toString() const = 0;
             virtual IObject* clone() = 0;
     };
