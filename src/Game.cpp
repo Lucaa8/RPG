@@ -59,7 +59,38 @@ namespace RPG
             {
                 dir.x = -1.0f;
             }
-
+            if(Keyboard::isKeyPressed(Keyboard::F))
+            {
+                Frame* f = currentHero->getAnimation()->getCurrentFrame();
+                if(f->getCurrent()!=AnimType::SHOOT)
+                {
+                    f->setCurrent(AnimType::SHOOT);
+                }
+                Bow* b = dynamic_cast<Bow*>(currentHero->getObject());
+                if(b!=nullptr)
+                {
+                    if(b->isBent())
+                    {
+                        f->run = false;
+                    }
+                    else
+                    {
+                        b->tick(deltaTime);
+                    }
+                }
+            }
+            else
+            {
+                Bow* b = dynamic_cast<Bow*>(currentHero->getObject());
+                if(b!=nullptr)
+                {
+                    if(b->isInUse())
+                    {
+                        b->shoot();
+                        currentHero->getAnimation()->getCurrentFrame()->setCurrent(AnimType::WALKING);
+                    }
+                }
+            }
             //Erase all the window
             window.clear();
 
