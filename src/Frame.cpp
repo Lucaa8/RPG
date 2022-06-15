@@ -60,18 +60,19 @@ Frame::~Frame()
 
 void Frame::apply(Sprite& sprite)
 {
-    sprite.setScale({2.0f, 2.0f});
+    //sprite.setScale({2.0f, 2.0f});
     sprite.setTexture(texture);
     sprite.setTextureRect(*(frames[current]));
 }
 
 void Frame::next()
 {
+    //c un peu du bricolage j'avoue..
+    if(current+5>=maxFrames&&getCurrent()==AnimType::SHOOT)return; //when the mouse is still pressed and the player is shooting with a bow, the frame doesnt continue
     current++;
     if(current>=maxFrames)
     {
         current = 0;
-        cout << "next" << endl;
     }
 }
 
