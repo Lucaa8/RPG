@@ -20,11 +20,11 @@ namespace RPG
             string toString() const override;
             IObject* clone() override;
 
-        protected:
-
-        private:
+        protected: //because arrow extends Potion
             string effect;
             int power = 0;
+
+        private:
     };
 }
 
