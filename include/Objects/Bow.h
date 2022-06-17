@@ -21,7 +21,7 @@ namespace RPG
             string toString() const override;
             IObject* clone() override;
             void tick(float);
-            bool shoot();
+            double shoot();
             bool isInUse() const override;
             bool isBent() const;
 

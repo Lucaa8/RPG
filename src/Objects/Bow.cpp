@@ -2,7 +2,7 @@
 
 namespace RPG
 {
-    double const Bow::maxDrawingTime = 1.30f;
+    double const Bow::maxDrawingTime = 0.9f;
 
     Bow::Bow(int arrows, int currentDrawingTime) : Weapon("Bow", 45, 50), arrows(arrows), currentDrawingTime(currentDrawingTime) {}
 
@@ -29,18 +29,16 @@ namespace RPG
         }
     }
 
-    bool Bow::shoot()
+    double Bow::shoot()
     {
-        bool shot = false;
-        if(arrows>0 && currentDrawingTime>0.4f) //little delay so player can't spam close arrows
+        double power = -1.f;
+        if(arrows>0 && currentDrawingTime>0.3f) //little delay so player can't spam close arrows
         {
-            double power = (currentDrawingTime/maxDrawingTime)*getRange();
+            power = (currentDrawingTime/maxDrawingTime)*getRange();
             arrows--;
-            cout << "shot at distance " << power << ". Remaining arrows " << arrows << endl;
-            shot = true;
         }
         currentDrawingTime = 0;
-        return shot;
+        return power;
     }
 
     bool Bow::isInUse() const
@@ -55,7 +53,7 @@ namespace RPG
 
     string Bow::toString() const
     {
-        stringstream ss;
+        std::stringstream ss;
         ss << "Bow implements Weapon implements IObject{Name=" << getWeaponName() << ", Damage=" << getDamage() << ", Reach=" << getRange() << ", Arrows=" << getArrows() << ", DrawingTime=" << currentDrawingTime << "}";
         return ss.str();
     }
