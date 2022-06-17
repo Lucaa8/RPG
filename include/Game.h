@@ -10,6 +10,7 @@
 using namespace std;
 using namespace sf;
 
+#include "Arrow.h"
 #include "World.h"
 #include "Hero.h"
 #include "Warrior.h"

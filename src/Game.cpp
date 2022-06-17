@@ -11,7 +11,7 @@ namespace RPG
     void Game::init()
     {
         world = new World("world", new Location(0.0, 0.0, 0.0));
-        window.create(VideoMode(1280, 720), "RPG");
+        window.create(VideoMode(1280, 768), "RPG");
         if (!defaultFont.loadFromFile("./arial.ttf")) //doesnt work when launched from c::b but works when exe is launched manually? wth?..another c::b bullshit ig
         {
             cout << "Failed to load default font file" << endl;
@@ -59,40 +59,17 @@ namespace RPG
             {
                 dir.x = -1.0f;
             }
-            if(Keyboard::isKeyPressed(Keyboard::F))
-            {
-                Frame* f = currentHero->getAnimation()->getCurrentFrame();
-                if(f->getCurrent()!=AnimType::SHOOT)
-                {
-                    f->setCurrent(AnimType::SHOOT);
-                }
-                Bow* b = dynamic_cast<Bow*>(currentHero->getObject());
-                if(b!=nullptr)
-                {
-                    if(b->isBent())
-                    {
-                        f->run = false;
-                    }
-                    else
-                    {
-                        b->tick(deltaTime);
-                    }
-                }
-            }
-            else
-            {
-                Bow* b = dynamic_cast<Bow*>(currentHero->getObject());
-                if(b!=nullptr)
-                {
-                    if(b->isInUse())
-                    {
-                        b->shoot();
-                        currentHero->getAnimation()->getCurrentFrame()->setCurrent(AnimType::WALKING);
-                    }
-                }
-            }
+
+            currentHero->useWeapon(deltaTime, Mouse::isButtonPressed(Mouse::Left));
+
             //Erase all the window
             window.clear();
+
+            //Draw the png map
+            world->drawMap(window);
+
+            //Tick all current created arrows
+            Arrow::tickAll(deltaTime, window);
 
             //Update our current hero position, motion, etc..
             currentHero->setDirection(dir); //maybe make one method which set dir and update all in one?
@@ -101,6 +78,8 @@ namespace RPG
 
             //Re-draw all
             window.display();
+
+            int col = world->collideWith(currentHero->getHitbox());
         }
     }
 
