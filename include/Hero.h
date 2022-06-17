@@ -7,6 +7,7 @@ using namespace std;
 
 #include "IObject.h"
 #include "Bow.h"
+#include "Arrow.h"
 #include "Potion.h"
 #include "Shield.h"
 #include "Location.h"
@@ -42,11 +43,12 @@ namespace RPG
 
             //Graphical part
             sf::Sprite& getSprite();
+            sf::RectangleShape& getHitbox();
             Animation* getAnimation() const;
             void draw(sf::RenderTarget&, sf::Font&) const;
             void setDirection(const sf::Vector2f& dir);
-            //void useWeapon()
-            void update(float deltaTime);
+            void useWeapon(float, bool);
+            void update(float);
 
         protected:
             void setObject(IObject* newObject);
@@ -62,6 +64,7 @@ namespace RPG
             Location* loc; //still using this class to store the sprite's pos instead of vect2f but not using z coord. Because teleport methods are useful
             sf::Vector2f velocity = {0.0f, 0.0f};
             sf::Sprite sprite;
+            sf::RectangleShape hitbox;
             Animation* frames;
 
             //SETTERS

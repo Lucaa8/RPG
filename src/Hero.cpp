@@ -167,6 +167,11 @@ namespace RPG
     }
 
     //Graphical part
+    sf::RectangleShape& Hero::getHitbox()
+    {
+        return hitbox;
+    }
+
     sf::Sprite& Hero::getSprite()
     {
         return sprite;
@@ -177,11 +182,24 @@ namespace RPG
         return frames;
     }
 
+    RectangleShape drawHitbox(const IntRect& textRect, const Sprite& sprite)
+    {
+        RectangleShape rect;
+        rect.setFillColor(Color::Transparent);
+        rect.setOutlineColor(Color::Black);
+        rect.setOutlineThickness(1);
+        rect.setSize(Vector2f(textRect.width/2, textRect.height*0.8));
+        Vector2f pos = Vector2f(sprite.getPosition().x+rect.getSize().x/2, sprite.getPosition().y+rect.getSize().y*0.2);
+        rect.setPosition(pos);
+        return rect;
+    }
+
     void Hero::draw(sf::RenderTarget& target, sf::Font& defFont) const
     {
+        target.draw(hitbox);
         target.draw(sprite);
-        Text nametag(getName(), defFont, 20);
-        nametag.setPosition(sprite.getPosition().x+24, sprite.getPosition().y-10);
+        Text nametag(getName(), defFont, 15);
+        nametag.setPosition(sprite.getPosition().x+20, sprite.getPosition().y-12);
         target.draw(nametag);
     }
 
@@ -214,7 +232,7 @@ namespace RPG
 
     void Hero::update(float deltaTime)
     {
-        if(object->isInUse())
+        if(object!=nullptr&&object->isInUse())
         {
 
         }
@@ -222,12 +240,53 @@ namespace RPG
         {
             loc->add(velocity.x*deltaTime, velocity.y*deltaTime, 0);
             sprite.setPosition({(float)loc->getX(), (float)loc->getY()});
+            hitbox = drawHitbox(sprite.getTextureRect(), sprite); //work only when sprite isn't rescaled
+            if(frames!=nullptr)
+            {
+                frames->getCurrentFrame()->run = velocity.x != 0 || velocity.y != 0 || frames->getCurrentFrame()->getCurrent()!=AnimType::WALKING;
+            }
         }
         if(frames!=nullptr)
         {
             //dont animate the sprite if current is walking but the player isnt walking
-            frames->getCurrentFrame()->run = velocity.x != 0 || velocity.y != 0 || frames->getCurrentFrame()->getCurrent()!=AnimType::WALKING;
+            //frames->getCurrentFrame()->run = velocity.x != 0 || velocity.y != 0 || frames->getCurrentFrame()->getCurrent()!=AnimType::WALKING;
             frames->tick(deltaTime, sprite);
+        }
+    }
+
+    void Hero::useWeapon(float deltaTime, bool pressed)
+    {
+        Frame* f = getAnimation()->getCurrentFrame();
+        Bow* b = dynamic_cast<Bow*>(getObject());
+        if(b!=nullptr)
+        {
+            if(pressed)
+            {
+                if(f->getCurrent()!=AnimType::SHOOT)
+                {
+                    f->setCurrent(AnimType::SHOOT);
+                    f->run = true;
+                }
+                if(!b->isBent())
+                {
+                    b->tick(deltaTime);
+                }
+            }
+            else
+            {
+                if(b->isInUse())
+                {
+                    double power = b->shoot();
+                    f->setCurrent(AnimType::WALKING);
+                    if(power>0.f)
+                    {
+                        Vector2f vec = Vector2f(getSprite().getPosition());
+                        vec.x+=40.f;
+                        vec.y+=35.f;//Heal Speed or Poison (changes the arrow's color
+                        new Arrow("Heal", 1, power*10, getAnimation()->getCurrentFrame()->getDirection(), vec);
+                    }
+                }
+            }
         }
     }
 }
