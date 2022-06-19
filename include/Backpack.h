@@ -13,7 +13,7 @@ namespace RPG
     {
         public:
             Backpack();
-            virtual ~Backpack();
+            ~Backpack();
             void pack(IObject*);
             IObject* unpack();
             bool isEmpty() const;

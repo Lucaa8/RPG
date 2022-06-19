@@ -30,7 +30,7 @@ namespace RPG
             Location* getSpawnLocation() const;
             void initMap();
             void drawMap(RenderTarget&);
-            int collideWith(RectangleShape&) const;
+            int collideWith(RectangleShape&);
 
         protected:
 

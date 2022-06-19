@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <thread>
+#include <chrono>
 using namespace std;
 
 #include "IObject.h"
@@ -13,6 +15,7 @@ using namespace std;
 #include "Location.h"
 #include "Backpack.h"
 #include "Animation.h"
+#include "World.h"
 
 namespace RPG
 {
@@ -28,17 +31,19 @@ namespace RPG
             virtual bool interact(const Hero&) const = 0;
             bool damage(const Hero&);
             void teleport(double, double, double);
-            void teleport(const Location*);
+            void teleport(const Location&);
             void teleport(const Hero&);
             friend ostream& operator<<(ostream&, const Hero&);
 
             //GETTERS
             string getName() const;
+            int getQuest() const;
             int getStrength() const;
             int getAgility() const;
             int getIQ() const;
             double getHealth() const;
             IObject* getObject() const;
+            void setLocation(double x, double y);
             Location* getLocation() const;
 
             //Graphical part
@@ -48,7 +53,7 @@ namespace RPG
             void draw(sf::RenderTarget&, sf::Font&) const;
             void setDirection(const sf::Vector2f& dir);
             void useWeapon(float, bool);
-            void update(float);
+            void update(World*, float);
 
         protected:
             void setObject(IObject* newObject);
@@ -60,12 +65,17 @@ namespace RPG
             int intelligence;
             double hp;
             string name;
+            int quest;
             IObject* object;
             Location* loc; //still using this class to store the sprite's pos instead of vect2f but not using z coord. Because teleport methods are useful
             sf::Vector2f velocity = {0.0f, 0.0f};
             sf::Sprite sprite;
             sf::RectangleShape hitbox;
             Animation* frames;
+
+            //bricolage
+            bool talkToGerrin = false;
+            bool didBuy = false;
 
             //SETTERS
             void setHealth(double);

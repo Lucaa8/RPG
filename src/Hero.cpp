@@ -1,8 +1,12 @@
 #include "Hero.h"
+#include "Game.h" //not good but no choice.. include loop otherwise (if including Game.h in header)
 
 namespace RPG
 {
     double const Hero::interactDistance = 7.0;
+
+    //prototype
+    RectangleShape drawHitbox(const IntRect&, const Sprite&);
 
     Hero::Hero() :
         strength(0),
@@ -41,6 +45,7 @@ namespace RPG
         delete loc;
         delete frames;
     }
+
 
     ostream& operator<<(ostream &s, const Hero &h)
     {
@@ -111,14 +116,14 @@ namespace RPG
         cout << " to " << *loc << endl;
     }
 
-    void Hero::teleport(const Location* loc)
+    void Hero::teleport(const Location& loc)
     {
-        this->teleport(loc->getX(), loc->getY(), loc->getZ());
+        this->teleport(loc.getX(), loc.getY(), loc.getZ());
     }
 
     void Hero::teleport(const Hero& hero)
     {
-        this->teleport(hero.getLocation());
+        this->teleport(*(hero.getLocation()));
     }
 
     void Hero::setObject(IObject* newObject)
@@ -134,6 +139,11 @@ namespace RPG
     string Hero::getName() const
     {
         return name;
+    }
+
+    int Hero::getQuest() const
+    {
+        return quest;
     }
 
     int Hero::getStrength() const
@@ -159,6 +169,13 @@ namespace RPG
     IObject* Hero::getObject() const
     {
         return object;
+    }
+
+    void Hero::setLocation(double dx, double dy)
+    {
+        loc->add(dx, dy, 0);
+        sprite.setPosition({(float)loc->getX(), (float)loc->getY()});
+        hitbox = drawHitbox(sprite.getTextureRect(), sprite); //work only when sprite isn't rescaled
     }
 
     Location* Hero::getLocation() const
@@ -196,11 +213,33 @@ namespace RPG
 
     void Hero::draw(sf::RenderTarget& target, sf::Font& defFont) const
     {
-        target.draw(hitbox);
+        //target.draw(hitbox); //for debugging
         target.draw(sprite);
         Text nametag(getName(), defFont, 15);
         nametag.setPosition(sprite.getPosition().x+20, sprite.getPosition().y-12);
         target.draw(nametag);
+        if(quest>0)
+        {
+            string qText;
+            if(quest==1)
+                qText = "Hadena: You can heal yourself with the heal potion or HP icons and even get a speed effect!\n\t\t\t   But be careful the green potion is a poison effect!";
+            else if(quest==2)
+            {
+                if(didBuy)
+                    qText = "Shop: Bring the arrows to Gerrin!";
+                else
+                    qText = "Gerrin: Can you buy me some speed arrows at the shop ? (Blue house)";
+            }
+            else if(quest==3)
+                qText = "Gerrin: Thank you so much. To reward you I'll give you 50HP.";
+            else if(quest==4)
+                qText = "Gerrin: Wrong item. Go to the shop! (Blue house)";
+            else if(quest==5)
+                qText = "Shop: Talk to Gerrin and come back!";
+            Text q(qText, defFont, 15);
+            q.setPosition(10, 10);
+            target.draw(q);
+        }
     }
 
     void Hero::setDirection(const sf::Vector2f& dir)
@@ -226,24 +265,114 @@ namespace RPG
             {
                 d = Dir::BACK;
             }
-            f->setDirection(d);
+            if(hp>0)
+                f->setDirection(d);
         }
     }
 
-    void Hero::update(float deltaTime)
+    void Hero::update(World* w, float deltaTime)
     {
         if(object!=nullptr&&object->isInUse())
         {
-
+            //nothing to do for now...
         }
         else
         {
-            loc->add(velocity.x*deltaTime, velocity.y*deltaTime, 0);
-            sprite.setPosition({(float)loc->getX(), (float)loc->getY()});
-            hitbox = drawHitbox(sprite.getTextureRect(), sprite); //work only when sprite isn't rescaled
-            if(frames!=nullptr)
+            if(hp>0) //cannot move if dead
             {
-                frames->getCurrentFrame()->run = velocity.x != 0 || velocity.y != 0 || frames->getCurrentFrame()->getCurrent()!=AnimType::WALKING;
+                double dx = velocity.x*deltaTime;
+                double dy = velocity.y*deltaTime;
+                setLocation(dx, dy);
+                int collide = w->collideWith(getHitbox());
+                if(collide!=CollideMask::HOUSE1)
+                    talkToGerrin = false;
+                switch(collide) //Collide mask
+                {
+                    case CollideMask::WALL:
+                    {
+                        setLocation(-dx, -dy); //rollback if collide with wall
+                        break;
+                    }
+                    case CollideMask::POISON:
+                    {
+                        hp-=120;
+                        if(hp<=0)
+                        {
+                            frames->getCurrentFrame()->setDirection(Dir::BACK);
+                            frames->getCurrentFrame()->setCurrent(AnimType::DEATH);
+                        }
+                        break;
+                    }
+                    case CollideMask::SPEED:
+                    {
+                        agility+=75;
+                        break;
+                    }
+                    case CollideMask::PV:
+                    {
+                        hp+=50;
+                        break;
+                    }
+                    case CollideMask::ARROW:
+                    {
+                        Bow* b = dynamic_cast<Bow*>(getObject());
+                        if(b!=nullptr)
+                        {
+                            b->setArrows(b->getArrows()+15);
+                        }
+                        break;
+                    }
+                    case CollideMask::HEAL:
+                    {
+                        hp+=100;
+                        break;
+                    }
+                    case CollideMask::HOUSE2:
+                    {
+                         quest = 1;
+                         break;
+                    }
+                    case CollideMask::HOUSE1:
+                    {
+                        if(!talkToGerrin)
+                        {
+                            talkToGerrin = true;
+                            if(quest<2||quest>4)
+                            {
+                                quest = 2;
+                            }
+                            else if(quest==2)
+                            {
+                                if(didBuy)
+                                {
+                                    quest = 3;
+                                    hp+=50;
+                                    Game::instance->print("The hero completed the task asked by Gerrin and got 50hp!", true);
+                                }
+                                else
+                                    quest = 4;
+                            }
+                        }
+                        break;
+                    }
+                    case CollideMask::HOUSE3:
+                    {
+                        if(quest==2)
+                        {
+                            didBuy = true;
+                        }
+                        else
+                        {
+                            quest = 5;
+                            didBuy = false;
+                        }
+                        break;
+                    }
+                }
+                if(frames!=nullptr)
+                {
+                    frames->getCurrentFrame()->run = velocity.x != 0 || velocity.y != 0 || frames->getCurrentFrame()->getCurrent()!=AnimType::WALKING;
+                }
             }
         }
         if(frames!=nullptr)
@@ -256,6 +385,7 @@ namespace RPG
 
     void Hero::useWeapon(float deltaTime, bool pressed)
     {
+        if(hp<=0)return; //cannot shoot if dead
         Frame* f = getAnimation()->getCurrentFrame();
         Bow* b = dynamic_cast<Bow*>(getObject());
         if(b!=nullptr)

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h>
+#include <cstdlib>
 
 #include "Game.h"
 
@@ -7,6 +8,70 @@ using namespace std;
 using namespace RPG;
 
 Game g;
+
+Hero* createArtena();
+Hero* createGerrin();
+Hero* createHadena();
+Hero* createZora();
+
+int askInput(int);
+void showControls();
+
+int main()
+{
+
+    Hero* artena = createArtena();
+    Hero* gerrin = createGerrin();
+    Hero* hadena = createHadena();
+    Hero* zora   = createZora();
+
+    int choice = -1;
+    int nbHeroes = 1;
+
+    cout << endl;
+    showControls();
+    cout << endl << "You can get more infos in game, you just need to walk in front of the PNJs and check your left upper corner." << endl << endl;
+
+    do
+    {
+        cout << "Choose your Hero;" << endl <<
+        "1)" << endl << *artena << endl << "Choix ? "; //only Aetena can fight rn...
+        //"2)" << endl << *gerrin << endl << endl <<
+        //"3)" << endl << *hadena << endl << endl <<
+        //"4)" << endl << *zora << endl << "Choix ? ";
+        try
+        {
+            choice = askInput(nbHeroes);
+        }
+        catch(const exception& e)
+        {
+            cout << "failed to read choice: " << e.what() << endl;
+        }
+    }while(choice==-1);
+
+    Game::instance = &g;
+    g.init();
+
+    if(choice==1)
+        g.addHero(artena);
+    else if(choice==2)
+        g.addHero(hadena);
+    else if(choice==3)
+        g.addHero(gerrin);
+    else
+        g.addHero( zora );
+
+    g.addHero(gerrin);
+    g.addHero(hadena);
+    gerrin->teleport(Location(1218, 130, 0));
+    hadena->teleport(Location(320, 418, 0));
+
+    g.loop();
+
+    system("pause");
+
+    return 0;
+}
 
 Hero* createArtena()
 {
@@ -21,7 +86,7 @@ Hero* createArtena()
     a->setFrames(f, 6);
     a->setCurrentFrame("w1_s0_0");
                     //strength, agility(speed), intelligence, hp, name, object*, loc*
-    return new Warrior(100, 150, 30, 100.0, "Artena", new Bow(100), new Location(0.0, 60.0, 0.0), a);
+    return new Warrior(100, 150, 30, 100.0, "Arténa", new Bow(20), new Location(0.0, 60.0, 0.0), a);
 }
 
 Hero* createGerrin()
@@ -55,38 +120,32 @@ Hero* createZora()
     return new Warrior(100, 140, 30, 100.0, "Zora", new Shield(5), new Location(103.5, 61.0, -100.5), a);
 }
 
-int main()
+int askInput(int maxChoice)
 {
-    Hero* artena = createArtena();
-    Hero* gerrin = createGerrin();
-    Hero* hadena = createHadena();
-    Hero* zora   = createZora();
-
-    int choice = -1;
-
-    do
+    int choice;
+    int result = scanf("%d", &choice); //scanf because cin is bullshit
+    if (result == EOF)
     {
-        cout << "Choose your Hero;" << endl <<
-        "1)" << endl << *artena << endl << endl <<
-        "2)" << endl << *gerrin << endl << endl <<
-        "3)" << endl << *hadena << endl << endl <<
-        "4)" << endl << *zora << endl << "Choix ? ";
-        cin >> choice;
-    }while(choice<=0||choice>4);
-
-    Game::instance = &g;
-    g.init();
-
-    if(choice==1)
-        g.addHero(artena);
-    else if(choice==2)
-        g.addHero(hadena);
-    else if(choice==3)
-        g.addHero(gerrin);
-    else
-        g.addHero( zora );
-
-    g.loop();
-
-    return 0;
+        throw runtime_error("bad input");
+    }
+    if(result==0)
+    {
+        while (fgetc(stdin) != '\n'); //read buffer till reaching the \n (end of line)
+        throw runtime_error("bad input");
+    }
+    if(choice<=0||choice>maxChoice)
+    {
+        throw runtime_error("bad choice");
+    }
+    return choice;
 }
+
+void showControls()
+{
+    cout << "You can control an hero in game by using;" << endl <<
+    "WASD: Moving Up/Left/Down/Right" << endl <<
+    "Mouse Left: Shoot with your bow. Longer pressed = more power" << endl <<
+    "TAB: See your stats (shown while pressed)" << endl <<
+    "ESC: Pause the game (toggle)" << endl;
+}
+

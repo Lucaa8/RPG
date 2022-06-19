@@ -15,6 +15,11 @@ namespace RPG
         //dtor
     }
 
+    void Bow::setArrows(int arrows)
+    {
+        this->arrows = arrows;
+    }
+
     int Bow::getArrows() const
     {
         return arrows;
@@ -53,7 +58,7 @@ namespace RPG
 
     string Bow::toString() const
     {
-        std::stringstream ss;
+        stringstream ss;
         ss << "Bow implements Weapon implements IObject{Name=" << getWeaponName() << ", Damage=" << getDamage() << ", Reach=" << getRange() << ", Arrows=" << getArrows() << ", DrawingTime=" << currentDrawingTime << "}";
         return ss.str();
     }

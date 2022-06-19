@@ -17,6 +17,7 @@ namespace RPG
             Bow();
             static double const maxDrawingTime; //time needed to draw the bow (must be the animation's frameTime*nb of frames for shoot
             virtual ~Bow();
+            void setArrows(int);
             int getArrows() const;
             string toString() const override;
             IObject* clone() override;

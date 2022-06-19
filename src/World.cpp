@@ -1,4 +1,5 @@
 #include "World.h"
+#include "Game.h" //not good but no choice.. include loop otherwise (if including Game.h in header)
 
 namespace RPG
 {
@@ -55,7 +56,7 @@ namespace RPG
 
     void World::initMap()
     {
-        string texturePath = "textures/map/map.png";
+        string texturePath = "textures/map/mapv2.png";
         if (!gameMapTexture.loadFromFile(texturePath))
         {
             cout << "Failed to load the \""+texturePath+"\" texture";
@@ -88,11 +89,22 @@ namespace RPG
         screen.draw(gameMap);
     }
 
-    int World::collideWith(RectangleShape& rect) const
+    int World::collideWith(RectangleShape& rect)
     {
+        if(rect.getPosition().x < 0 || rect.getPosition().y < 0)
+            return 1;
         int x = rect.getPosition().x/32;
-        int y = rect.getPosition().y/32;
-        //cout << x << " " << y << endl;
-        return -1;
+        int y = (rect.getPosition().y+rect.getSize().y)/32;
+        if(x>=39||y>=24)
+        {
+            return 1;
+        }
+        int myx = mask[y][x];
+        if(myx>4)//0-4 arent consumable items (void, wall, houses)
+        {
+            Game::instance->print(static_cast<ostringstream*>(&(ostringstream() << "Consumed item with ID " << myx << " at tile location (" << x << "," << y << ")"))->str(), true);
+            mask[y][x] = 0; //remove item after consumed
+        }
+        return myx;
     }
 }

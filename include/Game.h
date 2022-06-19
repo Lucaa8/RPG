@@ -2,11 +2,13 @@
 #define GAME_H
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <algorithm>
 #include <windows.h>
 #include <SFML/Graphics.hpp>
 #include <chrono>
+#include <ctime>
 using namespace std;
 using namespace sf;
 
@@ -29,22 +31,27 @@ namespace RPG
             static Game* instance;
             void init();
             void loop();
-            void paint();
+            void stop();
             bool isGameRunning() const;
+            void drawMenu();
             Hero* getHero(string);
             void setCurrentHero(Hero* hero);
             Hero* getCurrentHero() const;
             World* getWorld();
             bool addHero(Hero*);
             bool removeHero(string);
+            void log(string);
+            void print(string, bool);
             vector<Hero*> getHeroes() const;
 
         protected:
 
         private:
+            void writeCenter(string, int, int);
             RenderWindow window;
             Font defaultFont;
             bool isPaused = false;
+            string pathLog = "logs.txt";
             World* world;
             Hero* currentHero;
             vector<Hero*> entities;

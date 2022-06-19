@@ -1,4 +1,5 @@
 #include "Frame.h"
+#include "Game.h"
 
 //max values: 63       63   1024   1024
 int encode(int y, int max, int w, int h)
@@ -72,6 +73,10 @@ void Frame::next()
     current++;
     if(current>=maxFrames)
     {
+        if(getCurrent()==AnimType::DEATH)
+        {
+            RPG::Game::instance->stop(); //So the game stops after the death animation is done
+        }
         current = 0;
     }
 }
@@ -86,6 +91,7 @@ void Frame::setCurrent(AnimType type)
         this->currentAnimY = decodeType[0];
         this->setDirection(this->getDirection()); //needed to update frames Y coord with the same direction as before
     }
+
     delete[] decodeType;
 }
 
