@@ -12,12 +12,12 @@ Check some of the in game content and explications in this [file](https://github
 - Artena, Gerrin, Hadena (Playable characters)
 
 
-Gerrin: Asks you to bring him some Arrows from the shop. (You can try to walk in front of the shop before you talked to Gerrin, it won't work!) \
-Hadena: Just gives you some advices with the map objects.
+**Gerrin**: Asks you to bring him some Arrows from the shop. (You can try to walk in front of the shop before you talked to Gerrin, it won't work!) \
+**Hadena**: Just gives you some advices with the map objects.
 
 ## Controls
-WASD       - Movement \
-Mouse-Left - Shoot with bow (maintain to shoot faster) \
-TAB        - Some informations about Arténa \
-ESC        - Pause the game \
+**WASD**       - Movement \
+**Mouse-Left** - Shoot with bow (maintain to shoot faster) \
+**TAB**        - Some informations about Arténa \
+**ESC**        - Pause the game 
 
