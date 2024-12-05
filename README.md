@@ -9,7 +9,7 @@ Check some of the in game content and explications in this [file](https://github
 - Texture map
 - Potions
 - Bow/Arrows
-- Artena, Gerrin, Hadena (Playable characters)
+- Artena, Gerrin, Hadena (Characters)
 
 
 **Gerrin**: Asks you to bring him some Arrows from the shop. (You can try to walk in front of the shop before you talked to Gerrin, it won't work!) \
